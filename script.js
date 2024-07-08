@@ -1,16 +1,16 @@
 const searchButton = document.querySelector(".search-btn");
 const Cityinput = document.querySelector(".city-input");
-
+const weathercardsdiv = document.querySelector(".weather-cards")
 const API_KEY="f128a0926011690876a20df4ebe8c9ba"; //API key for openweathermap API
 
 
 const createWeatherCard = (weatherItem) =>{
     return` <li class="card">
-                        <h3>(2024-07-05)</h3>
-                        <img src="https://openweathermap.org/img/wn/10d@2x.png" alt="weather-icon">
-                        <h4>Temp: 21°C</h4>
-                        <h4>Wind: 4.31 M/S</h4>
-                        <h4>Humidity: 74%</h4>
+                        <h3>(${weatherItem.dt_txt.split(" ")[0]})</h3>
+                        <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@2x.png" alt="weather-icon">
+                        <h4>Temp: ${(weatherItem.main.temp - 273.15).toFixed(2)}°C</h4>
+                        <h4>Wind: ${weatherItem.wind.speed} M/S</h4>
+                        <h4>Humidity: ${weatherItem.main.humidity} %</h4>
                     </li>`;
 }
 const getWeatherDetails=(CityName,lat,lon)=>{
@@ -28,7 +28,8 @@ const getWeatherDetails=(CityName,lat,lon)=>{
         });
         console.log(fivedaysforecast);
         fivedaysforecast.forEach(weatherItem => {
-            createWeatherCard(weatherItem);
+
+             weathercardsdiv.insertAdjacentHTML("beforeend" , createWeatherCard(weatherItem));
         });
     }).catch(()=>{
         alert("An error occured while fetching the weather forecast!");
