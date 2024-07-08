@@ -10,7 +10,7 @@ const API_KEY = "f128a0926011690876a20df4ebe8c9ba"; //API key for openweathermap
 const createWeatherCard = (cityname, weatherItem, index) => {
     if (index === 0) { //HTML for the main weather card
         return ` <div class="details">
-        <h2>${cityname} ${weatherItem.dt_txt.split(" ")[0]}</h2>
+        <h2>${cityname} (${weatherItem.dt_txt.split(" ")[0]})</h2>
         <h4>Temperature: ${(weatherItem.main.temp - 273.15).toFixed(2)}°C</h4>
                         <h4>Wind: ${weatherItem.wind.speed} M/S</h4>
                         <h4>Humidity: ${weatherItem.main.humidity} %</h4>
@@ -47,7 +47,7 @@ const createWeatherCard = (cityname, weatherItem, index) => {
             Cityinput.value = "";
             currentweatherdiv.innerHTML = "";
             weathercardsdiv.innerHTML = "";
-            
+
            // Creating weather cards and adding them to the DOM
             fivedaysforecast.forEach((weatherItem, index) => {
                 if (index === 0) {
