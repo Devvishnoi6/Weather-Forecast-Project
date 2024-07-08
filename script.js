@@ -8,18 +8,18 @@ const API_KEY = "f128a0926011690876a20df4ebe8c9ba"; //API key for openweathermap
 
 
 const createWeatherCard = (cityname, weatherItem, index) => {
-    if (index === 0) {
+    if (index === 0) { //HTML for the main weather card
         return ` <div class="details">
-        <h2>London (2024-07-05)</h2>
-        <h4>Temperature: 21°C</h4>
-        <h4>Wind: 4.31 M/S</h4>
-        <h4>Humidity: 74%</h4>
+        <h2>${cityname} ${weatherItem.dt_txt.split(" ")[0]}</h2>
+        <h4>Temperature: ${(weatherItem.main.temp - 273.15).toFixed(2)}°C</h4>
+                        <h4>Wind: ${weatherItem.wind.speed} M/S</h4>
+                        <h4>Humidity: ${weatherItem.main.humidity} %</h4>
     </div>
     <div class="icon">
-        <img src="https://openweathermap.org/img/wn/10d@4x.png" alt="weather-icon">
-        <h4>Moderate Rain</h4>
+        <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@4x.png" alt="weather-icon">
+        <h4>${weatherItem.weather[0].description}</h4>
     </div>`
-    } else {
+    } else { //HTML for the other five day forecast card
         return ` <li class="card">
                         <h3>(${weatherItem.dt_txt.split(" ")[0]})</h3>
                         <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@2x.png" alt="weather-icon">
@@ -32,6 +32,7 @@ const createWeatherCard = (cityname, weatherItem, index) => {
         const WeatherAPI = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
 
         fetch(WeatherAPI).then(res => res.json()).then(data => {
+
             //Filter the forecasts get only one forecast per day.
             const uniqueForecastDays = [];
             const fivedaysforecast = data.list.filter(forecast => {
@@ -41,11 +42,13 @@ const createWeatherCard = (cityname, weatherItem, index) => {
                 }
 
             });
+
             // Clearing previous weather data
             Cityinput.value = "";
             currentweatherdiv.innerHTML = "";
             weathercardsdiv.innerHTML = "";
-            console.log(fivedaysforecast);
+            
+           // Creating weather cards and adding them to the DOM
             fivedaysforecast.forEach((weatherItem, index) => {
                 if (index === 0) {
                     currentweatherdiv.insertAdjacentHTML("beforeend", createWeatherCard(CityName, weatherItem, index));
