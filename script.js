@@ -102,3 +102,4 @@ const createWeatherCard = (cityname, weatherItem, index) => {
 
     searchButton.addEventListener("click", getCityCoordinates);
     locationButton.addEventListener("click", getUserCoordinates);
+    Cityinput.addEventListener('keyup' ,e => e.key === "Enter" && getCityCoordinates )
