@@ -25,7 +25,9 @@ Add the ability to save favorite locations.
 Technologies Used:
 
 HTML
+
 CSS
+
 JavaScript
 
  Link to my Repo: https://github.com/Devvishnoi6?tab=repositories
