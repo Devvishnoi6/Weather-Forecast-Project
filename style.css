@@ -4,15 +4,19 @@
     box-sizing: border-box;
     font-family: 'Open Sans' , sans-serif;
 }
-body{
-    background: #E3F2FD;
+h3{
+    color: white;
 }
+body{
+    background: #5372F0;
+} 
+
 h1{
     color:white;
     padding: 18px 0 ;
     text-align: center;
     font: size 1.75rem;
-    background: #5372F0 ;
+    background: #040f3c ;
 }
 .container{
     display: flex;
@@ -36,18 +40,18 @@ h1{
       height: 1px;
       width: 100%;
       margin: 25px 0;
-      background-color: #bbb;
+      background-color: white;
       display: flex;
       align-items: center;
       justify-content: center;
 }
 .weather-input .separator::before{
     content: "or";
-    color: #6C757D;
+    color: white;
     font-size: 1.18rem ;
     padding: 0 15px;
     margin-top: -4px;
-    background-color: #E3F2FD;
+    background-color:#5372F0;
 }
 .weather-input button{
     width: 100%;
@@ -58,13 +62,20 @@ h1{
     color: white;
     font-size: 1rem;
     border-radius: 4px;
-    background: #5372F0;
+    background: #040f3c;
 
 }
 .weather-input .location-btn{
-    background: #6C757D;
+    background: #383b3d;
     color: white;
+    margin-bottom: 30px;
 }
+.weather-input a{
+    color: white;
+    text-decoration: none;
+    width: 100%;
+}
+
 .weather-data{
     width: 100%;
 }
@@ -72,7 +83,7 @@ h1{
     color: #fff;
     display: flex;
     border-radius: 5px;
-    background: #5372F0;
+    background: #040f3c ;
     padding: 20px 70px 20px 20px;
     justify-content: space-between;
 }
@@ -92,10 +103,12 @@ h1{
 .current-weather .icon h4{
     margin-top: -10px;
     text-transform: capitalize;
+    text-align: center;
 }
 .days-forecast h2{
     font-size: 1.5rem;
     margin: 20px 0;
+    color: white;
 }
 .weather-cards{
     display: flex;
@@ -106,12 +119,20 @@ h1{
     color: #fff;
     padding: 18px 16px;
     border-radius: 5px;
-    background: #6C757D;
+    background: #383b3d;
     width:calc(100% / 5) ;
 }
 .weather-cards .card img{
     max-width: 70px;
     margin: 5px 0 -12px 0;
+}
+footer{
+    
+    padding: 18px 0 ;
+    text-align: center;
+    color: white;
+    font-weight: 600;
+    background:#040f3c;
 }
 
 @media (max-width:1400px){
