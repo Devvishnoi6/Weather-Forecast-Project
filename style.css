@@ -75,6 +75,16 @@ h1{
     text-decoration: none;
     width: 100%;
 }
+.dropdown-container{
+    margin-top: 20px;
+}
+.recent-cities{
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
 
 .weather-data{
     width: 100%;

@@ -3,6 +3,8 @@ const Cityinput = document.querySelector(".city-input");
 const locationButton = document.querySelector(".location-btn");
 const weathercardsdiv = document.querySelector(".weather-cards")
 const currentweatherdiv = document.querySelector(".current-weather")
+const recentCitiesDropdown = document.querySelector(".recent-cities");
+const dropdowncontainer = document.querySelector(".dropdown-container");
 
 
 const API_KEY = "f128a0926011690876a20df4ebe8c9ba"; //API key for openweathermap API
@@ -57,11 +59,12 @@ const createWeatherCard = (cityname, weatherItem, index) => {
                     weathercardsdiv.insertAdjacentHTML("beforeend", createWeatherCard(CityName, weatherItem, index));
                 }
             });
+            addCityToRecent(CityName);
         }).catch(() => {
             alert("An error occured while fetching the weather forecast!");
         });
     }
-
+    
 
     const getCityCoordinates = () => {
         const CityName = Cityinput.value.trim(); //Get user entered city name and remove extra spaces
@@ -99,7 +102,41 @@ const createWeatherCard = (cityname, weatherItem, index) => {
             }
         )
     }
-
+    const loadRecentCities =()  => {
+        let recentCities = JSON.parse(localStorage.getItem('recentCities')) || [];
+        if (recentCities.length > 0) {
+            recentCitiesDropdown.style.display = 'block';
+            recentCitiesDropdown.innerHTML = '<option value="" disabled selected>Select a city</option>';
+            recentCities.forEach(city => {
+                let option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                recentCitiesDropdown.appendChild(option);
+            });
+        } else {
+            recentCitiesDropdown.style.display = 'none';
+        }
+    };
+    
+    const addCityToRecent = (city) => {
+        let recentCities = JSON.parse(localStorage.getItem('recentCities')) || [];
+        if (!recentCities.includes(city)) {
+            recentCities.push(city);
+            localStorage.setItem('recentCities', JSON.stringify(recentCities));
+            loadRecentCities();
+        }
+    };
     searchButton.addEventListener("click", getCityCoordinates);
     locationButton.addEventListener("click", getUserCoordinates);
-    Cityinput.addEventListener('keyup' ,e => e.key === "Enter" && getCityCoordinates )
+    Cityinput.addEventListener('keyup' ,e => e.key === "Enter" && getCityCoordinates());
+
+    recentCitiesDropdown.addEventListener('change' , function(){
+        const selectedcity = this.value;
+        if(selectedcity){
+            Cityinput.value = selectedcity;
+            getCityCoordinates();
+        }
+    });
+
+    //Load recent cities on page load
+    document.addEventListener('DOMContentLoaded', loadRecentCities());
