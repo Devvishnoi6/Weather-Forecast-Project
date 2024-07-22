@@ -1,17 +1,19 @@
-const searchButton = document.querySelector(".search-btn");
-const Cityinput = document.querySelector(".city-input");
-const locationButton = document.querySelector(".location-btn");
-const weathercardsdiv = document.querySelector(".weather-cards")
-const currentweatherdiv = document.querySelector(".current-weather")
-const recentCitiesDropdown = document.querySelector(".recent-cities");
+const Button = document.querySelector(".search-btn");
+const CaptureCity = document.querySelector(".city-input");
+const Buttonforlocation = document.querySelector(".location-btn");
+const Cardsforweather = document.querySelector(".weather-cards")
+const liveweather = document.querySelector(".current-weather")
+const DropdownforRecentCities = document.querySelector(".recent-cities");
 const dropdowncontainer = document.querySelector(".dropdown-container");
 
 
-const API_KEY = "f128a0926011690876a20df4ebe8c9ba"; //API key for openweathermap API
+//openweathaer API key
+const API_KEY = "f128a0926011690876a20df4ebe8c9ba";
 
+const Weathercardgenerate = (cityname, weatherItem, index) => {
 
-const createWeatherCard = (cityname, weatherItem, index) => {
-    if (index === 0) { //HTML for the main weather card
+    //Big weather card HTML.
+    if (index === 0) { 
         return ` <div class="details">
         <h2>${cityname} (${weatherItem.dt_txt.split(" ")[0]})</h2>
         <h4>Temperature: ${(weatherItem.main.temp - 273.15).toFixed(2)}°C</h4>
@@ -22,7 +24,10 @@ const createWeatherCard = (cityname, weatherItem, index) => {
         <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@4x.png" alt="weather-icon">
         <h4>${weatherItem.weather[0].description}</h4>
     </div>`
-    } else { //HTML for the other five day forecast card
+    } else
+    
+    //5 small weather cards HTML.
+    { 
         return ` <li class="card">
                         <h3>(${weatherItem.dt_txt.split(" ")[0]})</h3>
                         <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@2x.png" alt="weather-icon">
@@ -30,33 +35,37 @@ const createWeatherCard = (cityname, weatherItem, index) => {
                         <h4>Wind: ${weatherItem.wind.speed} M/S</h4>
                         <h4>Humidity: ${weatherItem.main.humidity} %</h4>
                     </li>`;
-    }}
-    const getWeatherDetails = (CityName, lat, lon) => {
+    }
+}
+    const Detailsofweather = (CityName, lat, lon) => {
         const WeatherAPI = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
 
         fetch(WeatherAPI).then(res => res.json()).then(data => {
 
-            //Filter the forecasts get only one forecast per day.
-            const uniqueForecastDays = [];
-            const fivedaysforecast = data.list.filter(forecast => {
-                const forecastDate = new Date(forecast.dt_txt).getDate();
-                if (!uniqueForecastDays.includes(forecastDate)) {
-                    return uniqueForecastDays.push(forecastDate);
+            //Extract one forecast per day
+            const specialForecastdays = [];
+            const forecastfor5days = data.list.filter(forecast => {
+                const Forecastdate = new Date(forecast.dt_txt).getDate();
+                if (!specialForecastdays.includes(Forecastdate)) {
+                    return specialForecastdays.push(Forecastdate);
                 }
 
             });
 
-            // Clearing previous weather data
-            Cityinput.value = "";
-            currentweatherdiv.innerHTML = "";
-            weathercardsdiv.innerHTML = "";
+            // delete last weather data
+            CaptureCity.value = "";
+            liveweather.innerHTML = "";
+            Cardsforweather.innerHTML = "";
 
-           // Creating weather cards and adding them to the DOM
-            fivedaysforecast.forEach((weatherItem, index) => {
+
+
+
+           //Including DOM  and generating weather card 
+            forecastfor5days.forEach((weatherItem, index) => {
                 if (index === 0) {
-                    currentweatherdiv.insertAdjacentHTML("beforeend", createWeatherCard(CityName, weatherItem, index));
+                    liveweather.insertAdjacentHTML("beforeend", Weathercardgenerate(CityName, weatherItem, index));
                 } else {
-                    weathercardsdiv.insertAdjacentHTML("beforeend", createWeatherCard(CityName, weatherItem, index));
+                    Cardsforweather.insertAdjacentHTML("beforeend", Weathercardgenerate(CityName, weatherItem, index));
                 }
             });
             addCityToRecent(CityName);
@@ -66,36 +75,50 @@ const createWeatherCard = (cityname, weatherItem, index) => {
     }
     
 
-    const getCityCoordinates = () => {
-        const CityName = Cityinput.value.trim(); //Get user entered city name and remove extra spaces
-        if (!CityName) return; //return if cityname is empty
+    const CoordinatesofCity = () => {
+
+     //Capure city name entered by user and excludes the extra spaces.
+
+        const CityName = CaptureCity.value.trim(); 
+
+
+        //return if cityname is left vacant.
+        if (!CityName) return; 
 
         const GettingAPI = `http://api.openweathermap.org/geo/1.0/direct?q=${CityName}&limit=1&appid=${API_KEY}`;
 
         fetch(GettingAPI).then(res => res.json()).then(data => {
             if (!data.length) return alert(`No coordinates found for ${CityName}`);
             const { name, lat, lon } = data[0];
-            getWeatherDetails(name, lat, lon);
+            Detailsofweather(name, lat, lon);
         }).catch(() => {
             alert("An error occured while fetching the coordinates!");
         });
     }
 
-    const getUserCoordinates = () =>{
+    const CatchingCoordinatesofUser = () =>{
         navigator.geolocation.getCurrentPosition(
             position=>{
-               const {latitude , longitude}= position.coords;//Get coordinates of user location
+
+
+                //Capuring User's location coordinates
+               const {latitude , longitude}= position.coords;
                const reversegeocodingURL = `http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`;
                
-        //Get city name from coordinates using reverse geocoding API       
+
+        //By applying reverse geocodingAPI getting the name of city.
+
         fetch(reversegeocodingURL).then(res => res.json()).then(data => {
             const { name } = data[0];
-            getWeatherDetails(name, latitude, longitude);
+            Detailsofweather(name, latitude, longitude);
         }).catch(() => {
             alert("An error occured while fetching the city!");
         });
     },
-            error =>{  //Show alert if user denied the location permission
+
+
+    //It will give an alert if user denied to access there current location.
+            error =>{  
                 if(error.code === error.PERMISSION_DENIED){
                     alert("Geolocation request denied. Please reset location permission to grant access again.")
                 }
@@ -105,16 +128,16 @@ const createWeatherCard = (cityname, weatherItem, index) => {
     const loadRecentCities =()  => {
         let recentCities = JSON.parse(localStorage.getItem('recentCities')) || [];
         if (recentCities.length > 0) {
-            recentCitiesDropdown.style.display = 'block';
-            recentCitiesDropdown.innerHTML = '<option value="" disabled selected>Select a city</option>';
+            DropdownforRecentCities.style.display = 'block';
+            DropdownforRecentCities.innerHTML = '<option value="" disabled selected>Select a city</option>';
             recentCities.forEach(city => {
                 let option = document.createElement('option');
                 option.value = city;
                 option.textContent = city;
-                recentCitiesDropdown.appendChild(option);
+                DropdownforRecentCities.appendChild(option);
             });
         } else {
-            recentCitiesDropdown.style.display = 'none';
+            DropdownforRecentCities.style.display = 'none';
         }
     };
     
@@ -126,15 +149,17 @@ const createWeatherCard = (cityname, weatherItem, index) => {
             loadRecentCities();
         }
     };
-    searchButton.addEventListener("click", getCityCoordinates);
-    locationButton.addEventListener("click", getUserCoordinates);
-    Cityinput.addEventListener('keyup' ,e => e.key === "Enter" && getCityCoordinates());
 
-    recentCitiesDropdown.addEventListener('change' , function(){
+
+    Button.addEventListener("click", CoordinatesofCity);
+    Buttonforlocation.addEventListener("click", CatchingCoordinatesofUser);
+    CaptureCity.addEventListener('keyup' ,e => e.key === "Enter" && CoordinatesofCity());
+
+    DropdownforRecentCities.addEventListener('change' , function(){
         const selectedcity = this.value;
         if(selectedcity){
-            Cityinput.value = selectedcity;
-            getCityCoordinates();
+            CaptureCity.value = selectedcity;
+            CoordinatesofCity();
         }
     });
 
